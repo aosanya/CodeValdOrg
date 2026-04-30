@@ -1,0 +1,5 @@
+- We will have a frontend like /workspaces/CodeVald-AIProject/CodeValdWorkFrontend called /workspaces/CodeVald-AIProject/CodeValdWorkOrg that an admin can use to manage the organisation
+- We will use standards :  https://oauth.net/2/#:~:text=OAuth%202.0%20is%20the%20industry,phones%2C%20and%20living%20room%20devices.
+- One agency per database just like /workspaces/CodeVald-AIProject/CodeValdGit
+- Start by creating a schema like /workspaces/CodeVald-AIProject/CodeValdGit/schema.go for Org
+- Document inside /workspaces/CodeVald-AIProject/CodeValdOrg/documentation
