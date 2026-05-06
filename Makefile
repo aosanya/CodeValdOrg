@@ -1,4 +1,4 @@
-.PHONY: build build-server run-server restart kill proto test test-arango test-all vet lint clean
+.PHONY: build build-server build-dev server dev dev-restart kill proto test cover test-arango test-all vet lint clean
 
 export PATH := /usr/local/go/bin:$(PATH)
 
@@ -8,32 +8,32 @@ export PATH := /usr/local/go/bin:$(PATH)
 build:
 	go build ./...
 
-## Build the service binary to bin/codevaldorg.
+## Build the production server binary to bin/codevaldorg-server.
 build-server:
-	go build -o bin/codevaldorg ./cmd
+	go build -o bin/codevaldorg-server ./cmd/server
 
-## Build and run the service.
-## ArangoDB, Cross, and OAuth vars can be placed in a .env file (loaded automatically).
-run-server: build-server
+## Build the dev binary to bin/codevaldorg-dev.
+build-dev:
+	go build -o bin/codevaldorg-dev ./cmd/dev
+
+## Run the production server locally. Expects env vars set by the caller.
+server: build-server
+	./bin/codevaldorg-server
+
+## Run the dev binary with local-dev defaults sourced from .env (if present).
+dev: build-dev
 	@if [ -f .env ]; then \
 		set -a && . ./.env && set +a; \
 	fi; \
-	./bin/codevaldorg
+	./bin/codevaldorg-dev
 
-## Stop any running instance, rebuild, and run.
-restart: kill build-server
-	@echo "Running codevaldorg..."
-	@if [ -f .env ]; then \
-		set -a && . ./.env && set +a; \
-	fi; \
-	./bin/codevaldorg
+## Stop any running dev instance, rebuild, and run.
+dev-restart: kill dev
 
-## Stop any running instances of codevaldorg.
+## Stop any running instances of the codevaldorg binaries.
 kill:
 	@echo "Stopping any running instances..."
-	-@pkill -x codevaldorg 2>/dev/null || true
-	-@ADDR="$${BIND_ADDR:-:9090}"; fuser -k "$${ADDR##*:}/tcp" 2>/dev/null || true
-	@sleep 1
+	-@pkill -9 -f "bin/codevaldorg-" 2>/dev/null || true
 
 # ── Proto Codegen ─────────────────────────────────────────────────────────────
 
@@ -47,9 +47,14 @@ proto:
 
 # ── Tests ─────────────────────────────────────────────────────────────────────
 
-## Run all unit tests (integration tests skip if ArangoDB is unreachable).
+## Run all unit tests with race detector (skips integration tests that need ArangoDB).
 test:
 	go test -v -race -count=1 ./...
+
+## Run tests and produce an HTML coverage report (coverage.html).
+cover:
+	go test -v -race -count=1 -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out -o coverage.html
 
 ## Run ArangoDB integration tests.
 ## Loads .env if it exists, otherwise falls back to environment variables.
@@ -59,14 +64,14 @@ test-arango:
 	@if [ -f .env ]; then \
 		set -a && . ./.env && set +a; \
 	fi; \
-	go test -v -race -count=1 ./internal/server/ ./storage/arangodb/
+	go test -v -race -count=1 -tags=integration ./storage/arangodb/
 
-## Run everything: unit tests + ArangoDB integration tests (loads .env).
+## Run everything: unit tests + ArangoDB integration tests.
 test-all:
 	@if [ -f .env ]; then \
 		set -a && . ./.env && set +a; \
 	fi; \
-	go test -v -race -count=1 ./...
+	go test -v -race -count=1 -tags=integration ./...
 
 # ── Quality ───────────────────────────────────────────────────────────────────
 
