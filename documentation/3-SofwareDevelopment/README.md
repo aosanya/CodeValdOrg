@@ -5,10 +5,8 @@
 This section captures development-oriented artefacts: research gaps,
 MVP scope, per-topic implementation details, and task tracking.
 
-The starting point for new work is **[research-gaps.md](research-gaps.md)** —
-it maps the documented design (sections 1 & 2) against the build-ready
-specifications a Go engineer needs to ship CodeValdOrg, and lists every
-outstanding decision or unwritten artefact.
+Research is complete (all 13 areas closed 2026-04-27). The active implementation
+backlog lives in **[mvp.md](mvp.md)**. Start there for day-to-day task selection.
 
 ---
 
@@ -16,7 +14,9 @@ outstanding decision or unwritten artefact.
 
 | Document | Description |
 |---|---|
-| [research-gaps.md](research-gaps.md) | Gap analysis across the 13 research areas defined in `.github/prompts/research.prompt.md`; identifies missing artefacts and the next deliverables that close each gap |
+| [mvp.md](mvp.md) | Active implementation backlog — 21 tasks across P0/P1/P2 priorities with scope, dependencies, and completion workflow |
+| [mvp_done.md](mvp_done.md) | Completed tasks log; rows moved here from `mvp.md` on merge |
+| [research-gaps.md](research-gaps.md) | Gap analysis across the 13 research areas — all closed 2026-04-27; historical reference |
 | [mvp-details/role-taxonomy.md](mvp-details/role-taxonomy.md) | Proposed v1 scope sets for the four built-in roles (`super_admin`, `admin`, `member`, `viewer`); open questions BR-002, BR-004 still to resolve (BR-001, BR-003 closed) |
 | [mvp-details/data-model/](mvp-details/data-model/) | Field-level entity specs for all 15 entity types — closes Area 1 of the gap analysis and feeds `schema.go` (Area 8) |
 | [mvp-details/scope-model.md](mvp-details/scope-model.md) | Flat scope grammar, registration & deprecation semantics, effective-scope calculation at mint time — closes Area 4 |
@@ -33,12 +33,65 @@ outstanding decision or unwritten artefact.
 
 ---
 
-## How to use this section
+## MVP Status
 
-1. Read `research-gaps.md` to find the highest-priority gap relevant to your task
-2. For each gap, the document names the next concrete deliverable (a
-   `.proto` file, a `schema.go` function, a config table, etc.)
-3. New per-topic detail files belong under `mvp-details/{domain}/` once
-   the MVP plan exists — see the refactor workflow in
-   `.github/prompts/research.prompt.md` for the folder layout rules
-   (≤500 lines per file, README ≤300 lines, group by topic not by task ID)
+| Task ID | Title | Status |
+|---|---|---|
+| ORG-001 | Module Scaffolding | 📋 Not Started |
+| ORG-002 | `schema.go` — `DefaultOrgSchema()` | 📋 Not Started |
+| ORG-003 | `models.go` — Go value types | 📋 Not Started |
+| ORG-004 | `errors.go` — sentinel errors | 📋 Not Started |
+| ORG-005 | Proto + codegen | 📋 Not Started |
+| ORG-006 | `OrgManager` interface | 📋 Not Started |
+| ORG-007 | `internal/config/config.go` | 📋 Not Started |
+| ORG-008 | ArangoDB entitygraph backend | 📋 Not Started |
+| ORG-009 | Organization + User lifecycle | 📋 Not Started |
+| ORG-010 | Token issuance | 📋 Not Started |
+| ORG-011 | Token introspection | 📋 Not Started |
+| ORG-012 | Token revocation + pub/sub | 📋 Not Started |
+| ORG-013 | Scope registration | 📋 Not Started |
+| ORG-014 | Role taxonomy + membership | 📋 Not Started |
+| ORG-015 | OAuth client management | 📋 Not Started |
+| ORG-016 | Cross registration + route registrar | 📋 Not Started |
+| ORG-017 | gRPC server handlers | 📋 Not Started |
+| ORG-018 | `cmd/server/main.go` startup wiring | 📋 Not Started |
+| ORG-019 | Unit tests | 📋 Not Started |
+| ORG-020 | Integration tests | 📋 Not Started |
+| ORG-021 | Conformance tests | 📋 Not Started |
+
+---
+
+## Execution Order
+
+```
+ORG-001 (scaffolding)
+  ├── ORG-002 (schema)   ──→ ORG-008 (backend)
+  ├── ORG-003 (models)   ──┐
+  ├── ORG-004 (errors)   ──┼──→ ORG-006 (interface) ──→ ORG-009..ORG-015 (domain logic)
+  ├── ORG-005 (proto)    ──┘                         ──→ ORG-017 (gRPC handlers)
+  └── ORG-007 (config)   ──→ ORG-016 (cross reg)    ──→ ORG-018 (main.go)
+
+ORG-019 (unit tests) — parallel, as each domain task lands
+ORG-020 (integration) — after ORG-008
+ORG-021 (conformance) — after ORG-018
+```
+
+---
+
+## Task Detail Files
+
+| File | Tasks |
+|---|---|
+| [mvp-details/schema-reference.md](mvp-details/schema-reference.md) | ORG-002 — `DefaultOrgSchema()` |
+| [mvp-details/data-model/](mvp-details/data-model/) | ORG-003 — models, ORG-002 — TypeDefinitions |
+| [mvp-details/error-catalog.md](mvp-details/error-catalog.md) | ORG-004, ORG-017 — error mapping |
+| [mvp-details/grpc-api.md](mvp-details/grpc-api.md) | ORG-005, ORG-017 — proto + handlers |
+| [mvp-details/configuration.md](mvp-details/configuration.md) | ORG-007 — config |
+| [mvp-details/token-issuance.md](mvp-details/token-issuance.md) | ORG-010 — token issuance |
+| [mvp-details/introspection.md](mvp-details/introspection.md) | ORG-011 — introspection |
+| [mvp-details/revocation-and-cache.md](mvp-details/revocation-and-cache.md) | ORG-012 — revocation |
+| [mvp-details/scope-model.md](mvp-details/scope-model.md) | ORG-013 — scope registration |
+| [mvp-details/role-taxonomy.md](mvp-details/role-taxonomy.md) | ORG-014 — roles + membership |
+| [mvp-details/cross-registration.md](mvp-details/cross-registration.md) | ORG-016 — cross registration |
+| [mvp-details/testing-strategy.md](mvp-details/testing-strategy.md) | ORG-019, ORG-020, ORG-021 |
+| [mvp-details/threat-model.md](mvp-details/threat-model.md) | Security reference for all tasks |

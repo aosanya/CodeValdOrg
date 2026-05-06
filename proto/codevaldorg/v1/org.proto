@@ -1,0 +1,476 @@
+syntax = "proto3";
+
+package codevaldorg.v1;
+
+option go_package = "github.com/aosanya/CodeValdOrg/gen/go/codevaldorg/v1;codevaldorgv1";
+
+import "google/protobuf/timestamp.proto";
+
+service OrgService {
+  // ── Organization Lifecycle ─────────────────────────────────────────────────
+  rpc InitOrganization    (InitOrganizationRequest)    returns (Organization);
+  rpc GetOrganization     (GetOrganizationRequest)     returns (Organization);
+  rpc UpdateOrganization  (UpdateOrganizationRequest)  returns (Organization);
+  rpc DisableOrganization (DisableOrganizationRequest) returns (Organization);
+  rpc DeleteOrganization  (DeleteOrganizationRequest)  returns (DeleteOrganizationResponse);
+
+  // ── User & Invitation ──────────────────────────────────────────────────────
+  rpc InviteUser        (InviteUserRequest)        returns (Invitation);
+  rpc AcceptInvitation  (AcceptInvitationRequest)  returns (User);
+  rpc GetUser           (GetUserRequest)           returns (User);
+  rpc ListUsers         (ListUsersRequest)         returns (ListUsersResponse);
+  rpc SuspendUser       (SuspendUserRequest)       returns (User);
+  rpc ReactivateUser    (ReactivateUserRequest)    returns (User);
+  rpc DeleteUser        (DeleteUserRequest)        returns (DeleteUserResponse);
+
+  // ── Roles & Scopes ─────────────────────────────────────────────────────────
+  rpc CreateRole    (CreateRoleRequest)    returns (Role);
+  rpc UpdateRole    (UpdateRoleRequest)    returns (Role);
+  rpc DeleteRole    (DeleteRoleRequest)    returns (DeleteRoleResponse);
+  rpc ListRoles     (ListRolesRequest)     returns (ListRolesResponse);
+
+  rpc RegisterScope  (RegisterScopeRequest)  returns (Scope);
+  rpc DeprecateScope (DeprecateScopeRequest) returns (Scope);
+  rpc ListScopes     (ListScopesRequest)     returns (ListScopesResponse);
+
+  // ── Membership ─────────────────────────────────────────────────────────────
+  rpc GrantMembership  (GrantMembershipRequest)  returns (Membership);
+  rpc RevokeMembership (RevokeMembershipRequest) returns (Membership);
+  rpc ListMemberships  (ListMembershipsRequest)  returns (ListMembershipsResponse);
+
+  // ── OAuth Clients ──────────────────────────────────────────────────────────
+  rpc CreateOAuthClient    (CreateOAuthClientRequest)    returns (CreateOAuthClientResponse);
+  rpc RotateClientSecret   (RotateClientSecretRequest)   returns (RotateClientSecretResponse);
+  rpc ListOAuthClients     (ListOAuthClientsRequest)     returns (ListOAuthClientsResponse);
+  rpc DeleteOAuthClient    (DeleteOAuthClientRequest)    returns (DeleteOAuthClientResponse);
+
+  // ── OAuth 2.0 Protocol ─────────────────────────────────────────────────────
+  rpc Authorize  (AuthorizeRequest)  returns (AuthorizeResponse);
+  rpc Token      (TokenRequest)      returns (TokenResponse);
+  rpc Introspect (IntrospectRequest) returns (IntrospectResponse);
+  rpc Revoke     (RevokeRequest)     returns (RevokeResponse);
+
+  // ── Audit ──────────────────────────────────────────────────────────────────
+  rpc ListAuditEvents (ListAuditEventsRequest) returns (ListAuditEventsResponse);
+}
+
+// ── Domain messages ───────────────────────────────────────────────────────────
+
+message Organization {
+  string agency_id    = 1;
+  string name         = 2;
+  bool   enabled      = 3;
+  string description  = 4;
+  string contact_email = 5;
+  string logo_url     = 6;
+  google.protobuf.Timestamp created_at  = 7;
+  google.protobuf.Timestamp updated_at  = 8;
+  google.protobuf.Timestamp disabled_at = 9;
+  google.protobuf.Timestamp deleted_at  = 10;
+}
+
+message User {
+  string agency_id    = 1;
+  string user_id      = 2;
+  string email        = 3;
+  UserStatus status   = 4;
+  string display_name = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  google.protobuf.Timestamp deleted_at = 8;
+}
+
+enum UserStatus {
+  USER_STATUS_UNSPECIFIED = 0;
+  USER_STATUS_INVITED     = 1;
+  USER_STATUS_ACTIVE      = 2;
+  USER_STATUS_SUSPENDED   = 3;
+  USER_STATUS_DELETED     = 4;
+}
+
+message Role {
+  string agency_id    = 1;
+  string role_id      = 2;
+  string name         = 3;
+  bool   builtin      = 4;
+  string display_name = 5;
+  string description  = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  google.protobuf.Timestamp deleted_at = 9;
+}
+
+message Scope {
+  string agency_id     = 1;
+  string scope_id      = 2;
+  string name          = 3;
+  string registered_by = 4;
+  string description   = 5;
+  google.protobuf.Timestamp created_at    = 6;
+  google.protobuf.Timestamp updated_at    = 7;
+  google.protobuf.Timestamp deprecated_at = 8;
+}
+
+message Membership {
+  string agency_id   = 1;
+  string membership_id = 2;
+  string user_id     = 3;
+  string role_id     = 4;
+  string granted_by  = 5;
+  google.protobuf.Timestamp granted_at = 6;
+  google.protobuf.Timestamp revoked_at = 7;
+}
+
+message Invitation {
+  string agency_id     = 1;
+  string invitation_id = 2;
+  string email         = 3;
+  string token         = 4;
+  InvitationStatus status = 5;
+  google.protobuf.Timestamp expires_at  = 6;
+  google.protobuf.Timestamp created_at  = 7;
+  google.protobuf.Timestamp accepted_at = 8;
+  google.protobuf.Timestamp revoked_at  = 9;
+}
+
+enum InvitationStatus {
+  INVITATION_STATUS_UNSPECIFIED = 0;
+  INVITATION_STATUS_PENDING     = 1;
+  INVITATION_STATUS_ACCEPTED    = 2;
+  INVITATION_STATUS_EXPIRED     = 3;
+  INVITATION_STATUS_REVOKED     = 4;
+}
+
+message OAuthClient {
+  string agency_id    = 1;
+  string client_id    = 2;
+  string client_type  = 3;
+  string name         = 4;
+  repeated string allowed_grant_types = 5;
+  string description  = 6;
+  google.protobuf.Timestamp created_at  = 7;
+  google.protobuf.Timestamp updated_at  = 8;
+  google.protobuf.Timestamp disabled_at = 9;
+  google.protobuf.Timestamp deleted_at  = 10;
+}
+
+message AuditEvent {
+  string agency_id   = 1;
+  string event_id    = 2;
+  string event_type  = 3;
+  string actor_id    = 4;
+  string subject_id  = 5;
+  string outcome     = 6;
+  google.protobuf.Timestamp event_at = 7;
+  string payload     = 8;
+}
+
+// ── Organization requests/responses ──────────────────────────────────────────
+
+message InitOrganizationRequest {
+  string agency_id     = 1;
+  string name          = 2;
+  string description   = 3;
+  string contact_email = 4;
+  string logo_url      = 5;
+}
+
+message GetOrganizationRequest {
+  string agency_id = 1;
+}
+
+message UpdateOrganizationRequest {
+  string agency_id     = 1;
+  string name          = 2;
+  string description   = 3;
+  string contact_email = 4;
+  string logo_url      = 5;
+}
+
+message DisableOrganizationRequest {
+  string agency_id = 1;
+}
+
+message DeleteOrganizationRequest {
+  string agency_id = 1;
+}
+
+message DeleteOrganizationResponse {
+  string agency_id = 1;
+}
+
+// ── User requests/responses ───────────────────────────────────────────────────
+
+message InviteUserRequest {
+  string agency_id         = 1;
+  string email             = 2;
+  string display_name      = 3;
+  string invited_by_user_id = 4;
+  repeated string role_ids = 5;
+  int64 expires_in_seconds = 6;
+}
+
+message AcceptInvitationRequest {
+  string agency_id = 1;
+  string token     = 2;
+}
+
+message GetUserRequest {
+  string agency_id = 1;
+  string user_id   = 2;
+}
+
+message ListUsersRequest {
+  string agency_id     = 1;
+  string status_filter = 2;
+  int32  page_size     = 3;
+  string page_token    = 4;
+}
+
+message ListUsersResponse {
+  repeated User users       = 1;
+  string        next_page_token = 2;
+}
+
+message SuspendUserRequest {
+  string agency_id = 1;
+  string user_id   = 2;
+}
+
+message ReactivateUserRequest {
+  string agency_id = 1;
+  string user_id   = 2;
+}
+
+message DeleteUserRequest {
+  string agency_id = 1;
+  string user_id   = 2;
+}
+
+message DeleteUserResponse {
+  string agency_id = 1;
+  string user_id   = 2;
+}
+
+// ── Role requests/responses ───────────────────────────────────────────────────
+
+message CreateRoleRequest {
+  string agency_id    = 1;
+  string name         = 2;
+  string display_name = 3;
+  string description  = 4;
+}
+
+message UpdateRoleRequest {
+  string agency_id    = 1;
+  string role_id      = 2;
+  string display_name = 3;
+  string description  = 4;
+}
+
+message DeleteRoleRequest {
+  string agency_id = 1;
+  string role_id   = 2;
+}
+
+message DeleteRoleResponse {
+  string agency_id = 1;
+  string role_id   = 2;
+}
+
+message ListRolesRequest {
+  string agency_id  = 1;
+  int32  page_size  = 2;
+  string page_token = 3;
+}
+
+message ListRolesResponse {
+  repeated Role roles         = 1;
+  string        next_page_token = 2;
+}
+
+// ── Scope requests/responses ──────────────────────────────────────────────────
+
+message RegisterScopeRequest {
+  string agency_id     = 1;
+  string name          = 2;
+  string registered_by = 3;
+  string description   = 4;
+}
+
+message DeprecateScopeRequest {
+  string agency_id = 1;
+  string scope_id  = 2;
+}
+
+message ListScopesRequest {
+  string agency_id  = 1;
+  int32  page_size  = 2;
+  string page_token = 3;
+}
+
+message ListScopesResponse {
+  repeated Scope scopes         = 1;
+  string         next_page_token = 2;
+}
+
+// ── Membership requests/responses ─────────────────────────────────────────────
+
+message GrantMembershipRequest {
+  string agency_id  = 1;
+  string user_id    = 2;
+  string role_id    = 3;
+  string granted_by = 4;
+}
+
+message RevokeMembershipRequest {
+  string agency_id    = 1;
+  string membership_id = 2;
+}
+
+message ListMembershipsRequest {
+  string agency_id  = 1;
+  string user_id    = 2;
+  int32  page_size  = 3;
+  string page_token = 4;
+}
+
+message ListMembershipsResponse {
+  repeated Membership memberships   = 1;
+  string              next_page_token = 2;
+}
+
+// ── OAuth client requests/responses ───────────────────────────────────────────
+
+message CreateOAuthClientRequest {
+  string agency_id    = 1;
+  string name         = 2;
+  string client_type  = 3;
+  string description  = 4;
+  repeated string allowed_grant_types = 5;
+  repeated string redirect_uris       = 6;
+  repeated string allowed_scope_ids   = 7;
+}
+
+message CreateOAuthClientResponse {
+  OAuthClient client           = 1;
+  string      plaintext_secret = 2;
+}
+
+message RotateClientSecretRequest {
+  string agency_id = 1;
+  string client_id = 2;
+}
+
+message RotateClientSecretResponse {
+  string plaintext_secret = 1;
+}
+
+message ListOAuthClientsRequest {
+  string agency_id  = 1;
+  int32  page_size  = 2;
+  string page_token = 3;
+}
+
+message ListOAuthClientsResponse {
+  repeated OAuthClient clients       = 1;
+  string               next_page_token = 2;
+}
+
+message DeleteOAuthClientRequest {
+  string agency_id = 1;
+  string client_id = 2;
+}
+
+message DeleteOAuthClientResponse {
+  string agency_id = 1;
+  string client_id = 2;
+}
+
+// ── OAuth 2.0 protocol requests/responses ─────────────────────────────────────
+
+message AuthorizeRequest {
+  string agency_id              = 1;
+  string client_id              = 2;
+  string redirect_uri           = 3;
+  string response_type          = 4;
+  string state                  = 5;
+  string code_challenge         = 6;
+  string code_challenge_method  = 7;
+  repeated string scopes        = 8;
+}
+
+message AuthorizeResponse {
+  string code  = 1;
+  string state = 2;
+}
+
+message TokenRequest {
+  string agency_id      = 1;
+  GrantType grant_type  = 2;
+  string client_id      = 3;
+  string client_secret  = 4;
+  string code           = 5;
+  string redirect_uri   = 6;
+  string code_verifier  = 7;
+  string refresh_token  = 8;
+  repeated string scopes = 9;
+}
+
+enum GrantType {
+  GRANT_TYPE_UNSPECIFIED    = 0;
+  GRANT_TYPE_AUTHORIZATION_CODE = 1;
+  GRANT_TYPE_CLIENT_CREDENTIALS = 2;
+  GRANT_TYPE_REFRESH_TOKEN  = 3;
+}
+
+message TokenResponse {
+  string access_token   = 1;
+  string token_type     = 2;
+  int32  expires_in     = 3;
+  string refresh_token  = 4;
+  repeated string scopes = 5;
+}
+
+message IntrospectRequest {
+  string agency_id = 1;
+  string token     = 2;
+}
+
+message IntrospectResponse {
+  bool   active    = 1;
+  repeated string scopes = 2;
+  string sub       = 3;
+  string client_id = 4;
+  google.protobuf.Timestamp exp = 5;
+  google.protobuf.Timestamp iat = 6;
+  string token_type = 7;
+}
+
+message RevokeRequest {
+  string agency_id = 1;
+  string token     = 2;
+  string reason    = 3;
+}
+
+message RevokeResponse {
+  string agency_id = 1;
+}
+
+// ── Audit requests/responses ──────────────────────────────────────────────────
+
+message ListAuditEventsRequest {
+  string agency_id         = 1;
+  string event_type_filter = 2;
+  string actor_id_filter   = 3;
+  string subject_id_filter = 4;
+  google.protobuf.Timestamp from = 5;
+  google.protobuf.Timestamp to   = 6;
+  int32  page_size         = 7;
+  string page_token        = 8;
+}
+
+message ListAuditEventsResponse {
+  repeated AuditEvent events       = 1;
+  string              next_page_token = 2;
+}
