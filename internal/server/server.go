@@ -602,6 +602,8 @@ func toProtoMembership(m codevaldorg.Membership) *pb.Membership {
 	return &pb.Membership{
 		AgencyId:     m.AgencyID,
 		MembershipId: m.ID,
+		UserId:       m.UserID,
+		RoleId:       m.RoleID,
 		GrantedBy:    m.GrantedBy,
 		GrantedAt:    ts(m.GrantedAt),
 		RevokedAt:    tsPtr(m.RevokedAt),

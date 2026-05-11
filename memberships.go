@@ -43,6 +43,8 @@ func (m *orgManager) GrantMembership(ctx context.Context, req GrantMembershipReq
 	}
 
 	mem := entityToMembership(memE)
+	mem.UserID = req.UserID
+	mem.RoleID = req.RoleID
 	return mem, nil
 }
 
@@ -97,9 +99,36 @@ func (m *orgManager) ListMemberships(ctx context.Context, req ListMembershipsReq
 		entities = filtered
 	}
 
+	// Build user→membership and membership→role maps from relationships.
+	userRels, err := m.dm.ListRelationships(ctx, entitygraph.RelationshipFilter{
+		AgencyID: m.cfg.AgencyID,
+		Name:     "has_membership",
+	})
+	if err != nil {
+		return nil, ErrTemporarilyUnavailable
+	}
+	roleRels, err := m.dm.ListRelationships(ctx, entitygraph.RelationshipFilter{
+		AgencyID: m.cfg.AgencyID,
+		Name:     "grants_role",
+	})
+	if err != nil {
+		return nil, ErrTemporarilyUnavailable
+	}
+	membershipUser := make(map[string]string, len(userRels))
+	for _, r := range userRels {
+		membershipUser[r.ToID] = r.FromID
+	}
+	membershipRole := make(map[string]string, len(roleRels))
+	for _, r := range roleRels {
+		membershipRole[r.FromID] = r.ToID
+	}
+
 	memberships := make([]Membership, len(entities))
 	for i, e := range entities {
-		memberships[i] = entityToMembership(e)
+		mem := entityToMembership(e)
+		mem.UserID = membershipUser[e.ID]
+		mem.RoleID = membershipRole[e.ID]
+		memberships[i] = mem
 	}
 	return memberships, nil
 }

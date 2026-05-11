@@ -100,6 +100,8 @@ type Scope struct {
 type Membership struct {
 	ID        string
 	AgencyID  string
+	UserID    string
+	RoleID    string
 	GrantedAt time.Time
 	GrantedBy string
 	RevokedAt *time.Time
