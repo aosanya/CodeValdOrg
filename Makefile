@@ -35,6 +35,9 @@ kill:
 	@echo "Stopping any running instances..."
 	-@pkill -9 -f "bin/codevaldorg-" 2>/dev/null || true
 
+## Stop any running instance, rebuild, and run.
+restart: dev-restart
+	
 # ── Proto Codegen ─────────────────────────────────────────────────────────────
 
 ## Regenerate Go stubs from proto/codevaldorg/v1/*.proto.

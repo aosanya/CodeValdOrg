@@ -219,7 +219,6 @@ func DefaultOrgSchema() types.Schema {
 				PathSegment:       "authorization-codes",
 				EntityIDParam:     "authorizationCodeId",
 				StorageCollection: "org_oauth_artifacts",
-				Immutable:         true,
 				Properties: []types.PropertyDefinition{
 					{Name: "agency_id", Type: types.PropertyTypeString, Required: true},
 					{Name: "code_hash", Type: types.PropertyTypeString, Required: true},

@@ -848,6 +848,10 @@ func (m *orgManager) getUserScopeIDs(ctx context.Context, userEntID string) ([]s
 			}
 		}
 	}
+	if len(scopeSet) == 0 {
+		// No has_scope edges on any role — no restriction from the user side.
+		return nil, nil
+	}
 	ids := make([]string, 0, len(scopeSet))
 	for id := range scopeSet {
 		ids = append(ids, id)
