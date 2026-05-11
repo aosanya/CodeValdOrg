@@ -437,6 +437,7 @@ func (s *OrgServer) Authorize(ctx context.Context, req *pb.AuthorizeRequest) (*p
 		CodeChallenge:       req.GetCodeChallenge(),
 		CodeChallengeMethod: req.GetCodeChallengeMethod(),
 		Scopes:              req.GetScopes(),
+		UserID:              req.GetUserId(),
 	})
 	if err != nil {
 		return nil, toGRPCError(err)

@@ -271,6 +271,7 @@ type AuthorizeRequest struct {
 	CodeChallenge       string
 	CodeChallengeMethod string
 	Scopes              []string
+	UserID              string
 }
 
 // TokenRequest is the input for all token grant flows.

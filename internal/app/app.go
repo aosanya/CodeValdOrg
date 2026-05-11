@@ -67,20 +67,8 @@ func Run(cfg config.Config) error {
 	}
 	seedCancel()
 
-	// ── OrgManager ───────────────────────────────────────────────────────────
-	mgr := codevaldorg.NewOrgManager(backend, backend, nil, codevaldorg.NewClock(), codevaldorg.ManagerConfig{
-		AgencyID:          cfg.AgencyID,
-		IssuerURL:         cfg.IssuerURL,
-		AccessTokenTTL:    cfg.AccessTokenTTL,
-		RefreshTokenTTL:   cfg.RefreshTokenTTL,
-		AuthCodeTTL:       cfg.AuthCodeTTL,
-		ClientSecretGrace: cfg.ClientSecretGrace,
-		Argon2Time:        cfg.Argon2Time,
-		Argon2MemoryKiB:   cfg.Argon2MemoryKiB,
-		Argon2Threads:     cfg.Argon2Threads,
-	})
-
 	// ── Cross registrar (optional) ────────────────────────────────────────────
+	var pub codevaldorg.CrossPublisher
 	if cfg.CrossEndpoint != "" {
 		reg, regErr := registrar.New(
 			cfg.CrossEndpoint,
@@ -92,6 +80,7 @@ func Run(cfg config.Config) error {
 		if regErr != nil {
 			log.Printf("codevaldorg: registrar: %v — continuing without registration", regErr)
 		} else {
+			pub = reg
 			defer reg.Close()
 			go reg.Run(ctx)
 		}
@@ -99,13 +88,26 @@ func Run(cfg config.Config) error {
 		log.Println("codevaldorg: CROSS_ENDPOINT not set — skipping Cross registration")
 	}
 
+	// ── OrgManager (constructed after registrar so publisher is available) ──────
+	mgr := codevaldorg.NewOrgManager(backend, backend, pub, codevaldorg.NewClock(), codevaldorg.ManagerConfig{
+		AgencyID:          cfg.AgencyID,
+		IssuerURL:         cfg.IssuerURL,
+		AccessTokenTTL:    cfg.AccessTokenTTL,
+		RefreshTokenTTL:   cfg.RefreshTokenTTL,
+		AuthCodeTTL:       cfg.AuthCodeTTL,
+		ClientSecretGrace: cfg.ClientSecretGrace,
+		Argon2Time:        cfg.Argon2Time,
+		Argon2MemoryKiB:   cfg.Argon2MemoryKiB,
+		Argon2Threads:     cfg.Argon2Threads,
+	})
+
 	// ── gRPC server ───────────────────────────────────────────────────────────
 	grpcServer, _ := serverutil.NewGRPCServer()
 	pb.RegisterOrgServiceServer(grpcServer, server.New(mgr, cfg.AgencyID))
 	healthpb.RegisterHealthServiceServer(grpcServer, health.New("codevaldorg"))
 
 	// ── HTTP handler (OAuth endpoints + healthz) ──────────────────────────────
-	httpHandler := httphandler.New(cfg.AgencyID, cfg.IssuerURL)
+	httpHandler := httphandler.New(cfg.AgencyID, cfg.IssuerURL, mgr)
 	httpServer := &http.Server{
 		Handler:      httpHandler,
 		ReadTimeout:  30 * time.Second,

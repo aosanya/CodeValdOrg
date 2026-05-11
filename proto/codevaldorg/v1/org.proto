@@ -398,6 +398,7 @@ message AuthorizeRequest {
   string code_challenge         = 6;
   string code_challenge_method  = 7;
   repeated string scopes        = 8;
+  string user_id                = 9;
 }
 
 message AuthorizeResponse {

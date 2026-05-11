@@ -3158,6 +3158,7 @@ type AuthorizeRequest struct {
 	CodeChallenge       string                 `protobuf:"bytes,6,opt,name=code_challenge,json=codeChallenge,proto3" json:"code_challenge,omitempty"`
 	CodeChallengeMethod string                 `protobuf:"bytes,7,opt,name=code_challenge_method,json=codeChallengeMethod,proto3" json:"code_challenge_method,omitempty"`
 	Scopes              []string               `protobuf:"bytes,8,rep,name=scopes,proto3" json:"scopes,omitempty"`
+	UserId              string                 `protobuf:"bytes,9,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	unknownFields       protoimpl.UnknownFields
 	sizeCache           protoimpl.SizeCache
 }
@@ -3246,6 +3247,13 @@ func (x *AuthorizeRequest) GetScopes() []string {
 		return x.Scopes
 	}
 	return nil
+}
+
+func (x *AuthorizeRequest) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
 }
 
 type AuthorizeResponse struct {
@@ -4139,7 +4147,7 @@ const file_codevaldorg_v1_org_proto_rawDesc = "" +
 	"\tclient_id\x18\x02 \x01(\tR\bclientId\"U\n" +
 	"\x19DeleteOAuthClientResponse\x12\x1b\n" +
 	"\tagency_id\x18\x01 \x01(\tR\bagencyId\x12\x1b\n" +
-	"\tclient_id\x18\x02 \x01(\tR\bclientId\"\x9d\x02\n" +
+	"\tclient_id\x18\x02 \x01(\tR\bclientId\"\xb6\x02\n" +
 	"\x10AuthorizeRequest\x12\x1b\n" +
 	"\tagency_id\x18\x01 \x01(\tR\bagencyId\x12\x1b\n" +
 	"\tclient_id\x18\x02 \x01(\tR\bclientId\x12!\n" +
@@ -4148,7 +4156,8 @@ const file_codevaldorg_v1_org_proto_rawDesc = "" +
 	"\x05state\x18\x05 \x01(\tR\x05state\x12%\n" +
 	"\x0ecode_challenge\x18\x06 \x01(\tR\rcodeChallenge\x122\n" +
 	"\x15code_challenge_method\x18\a \x01(\tR\x13codeChallengeMethod\x12\x16\n" +
-	"\x06scopes\x18\b \x03(\tR\x06scopes\"=\n" +
+	"\x06scopes\x18\b \x03(\tR\x06scopes\x12\x17\n" +
+	"\auser_id\x18\t \x01(\tR\x06userId\"=\n" +
 	"\x11AuthorizeResponse\x12\x12\n" +
 	"\x04code\x18\x01 \x01(\tR\x04code\x12\x14\n" +
 	"\x05state\x18\x02 \x01(\tR\x05state\"\xc0\x02\n" +
