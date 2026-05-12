@@ -109,7 +109,7 @@ The contract resource servers / Cross MAY follow:
 - **Cache hit window** — cache the `{active: true}` response for
   `min(exp - now, configured_max)`. `configured_max` should be ≤ 60s.
 - **Mandatory invalidation** — subscribe to
-  `cross.org.{agencyID}.token.revoked`; evict the cached entry by
+  `org.token.revoked`; evict the cached entry by
   `token_hash` (or by `token_id` if known) on receipt.
 - **Negative caching** — `{active: false}` SHOULD NOT be cached, to
   avoid extending revocation propagation delay if a token transiently

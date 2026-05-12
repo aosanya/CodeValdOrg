@@ -35,7 +35,7 @@ All four converge on the same write path:
      expires_at: <matches the underlying token's natural expiry>,
      reason
    }
-3. Publish cross.org.{agencyID}.token.revoked.
+3. Publish org.token.revoked.
 4. Audit: AuditEvent {event_type: "token.revoked", outcome: "success",
                      subject_id: token_id, payload: {reason}}.
 ```
@@ -59,7 +59,7 @@ do not accumulate forever.
 
 ---
 
-## Pub/sub contract — `cross.org.{agencyID}.token.revoked`
+## Pub/sub contract — `org.token.revoked`
 
 Topic name and payload are the contract. Subscribers MUST treat this
 topic as **at-least-once**; receivers must be idempotent on
@@ -164,7 +164,7 @@ Both attempt to write TokenRevocation rows for the chain.
 ArangoDB's unique index on (agency_id, token_hash) makes the second
 INSERT a no-op (returns "already exists" error → caught and treated
 as success — revocation is idempotent on token_hash).
-Both publish the cross.org.{agencyID}.token.revoked event.
+Both publish the org.token.revoked event.
 At-least-once delivery means subscribers see the event twice; idempotent
 eviction handles this cleanly.
 Both return ErrInvalidGrant.
@@ -187,7 +187,7 @@ deleted. The flow:
    expires_at > now AND no matching TokenRevocation exists.
 3. For each token (chunked by N=100 — same chunking pattern as
    SuspendUser): write TokenRevocation (reason: admin_revoke) and
-   publish cross.org.{agencyID}.token.revoked.
+   publish org.token.revoked.
 4. Soft-delete the OAuthClient (set deleted_at = now). The
    client entity is NOT hard-deleted — its existence is needed for
    audit-log reachability of past events that referenced it.

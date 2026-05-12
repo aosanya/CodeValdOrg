@@ -324,7 +324,7 @@ func (m *orgManager) tokenAuthCode(ctx context.Context, req TokenRequest) (Token
 	// 11. Publish (if publisher configured).
 	if m.pub != nil {
 		payload := m.tokenIssuedPayload(atEnt.ID, client.ClientID, userID, effectiveScopeNames, atExpires)
-		if pubErr := m.pub.Publish(ctx, m.cfg.AgencyID, "cross.org."+m.cfg.AgencyID+".token.issued", "codevaldorg", payload); pubErr != nil {
+		if pubErr := m.pub.Publish(ctx, m.cfg.AgencyID, "org.token.issued", "codevaldorg", payload); pubErr != nil {
 			_ = m.dm.DeleteEntity(ctx, m.cfg.AgencyID, atEnt.ID)
 			if wantsRefresh {
 				_ = m.dm.DeleteEntity(ctx, m.cfg.AgencyID, rtEnt.ID)
@@ -429,7 +429,7 @@ func (m *orgManager) tokenClientCreds(ctx context.Context, req TokenRequest) (To
 	// 5. Publish.
 	if m.pub != nil {
 		payload := m.tokenIssuedPayload(atEnt.ID, client.ClientID, "", effectiveScopeNames, atExpires)
-		if pubErr := m.pub.Publish(ctx, m.cfg.AgencyID, "cross.org."+m.cfg.AgencyID+".token.issued", "codevaldorg", payload); pubErr != nil {
+		if pubErr := m.pub.Publish(ctx, m.cfg.AgencyID, "org.token.issued", "codevaldorg", payload); pubErr != nil {
 			_ = m.dm.DeleteEntity(ctx, m.cfg.AgencyID, atEnt.ID)
 			return TokenResult{}, ErrTemporarilyUnavailable
 		}
@@ -608,7 +608,7 @@ func (m *orgManager) tokenRefresh(ctx context.Context, req TokenRequest) (TokenR
 	// Publish.
 	if m.pub != nil {
 		payload := m.tokenIssuedPayload(newATEnt.ID, client.ClientID, userID, effectiveScopeNames, atExpires)
-		if pubErr := m.pub.Publish(ctx, m.cfg.AgencyID, "cross.org."+m.cfg.AgencyID+".token.issued", "codevaldorg", payload); pubErr != nil {
+		if pubErr := m.pub.Publish(ctx, m.cfg.AgencyID, "org.token.issued", "codevaldorg", payload); pubErr != nil {
 			_ = m.dm.DeleteEntity(ctx, m.cfg.AgencyID, newATEnt.ID)
 			_ = m.dm.DeleteEntity(ctx, m.cfg.AgencyID, newRTEnt.ID)
 			return TokenResult{}, ErrTemporarilyUnavailable
@@ -743,7 +743,7 @@ func (m *orgManager) Revoke(ctx context.Context, token, reason string) error {
 
 	if m.pub != nil {
 		payload := fmt.Sprintf(`{"token_hash":%q,"revoked_at":%q,"reason":%q}`, tokenHash, now, reason)
-		_ = m.pub.Publish(ctx, m.cfg.AgencyID, "cross.org."+m.cfg.AgencyID+".token.revoked", "codevaldorg", payload)
+		_ = m.pub.Publish(ctx, m.cfg.AgencyID, "org.token.revoked", "codevaldorg", payload)
 	}
 	return nil
 }
@@ -1053,7 +1053,7 @@ func (m *orgManager) revokeRefreshChain(ctx context.Context, rtEntID string) err
 	return nil
 }
 
-// tokenIssuedPayload builds the JSON payload for the cross.org.*.token.issued event.
+// tokenIssuedPayload builds the JSON payload for the org.token.issued event.
 func (m *orgManager) tokenIssuedPayload(tokenID, clientID, userID string, scopes []string, expiresAt string) string {
 	ev := map[string]any{
 		"event_id":   uuid.New().String(),

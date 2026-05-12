@@ -98,7 +98,7 @@ In-cluster callers MUST use gRPC for the latency budget (NFR-002).
 Client                      OrgService
   │── POST /oauth/revoke ────▶
   │   + token                  │── write TokenRevocation record
-  │                            │── emit cross.org.{agencyID}.token.revoked event
+  │                            │── emit org.token.revoked event
   │◀── 200 OK ─────────────────│
 ```
 

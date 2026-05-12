@@ -170,7 +170,7 @@ document.
 
 ### Other v2 backlog
 - **Multi-factor authentication** — v1 is password-only; MFA is layered on top in v2.
-- **Webhook signing** for `cross.org.{agencyID}.token.revoked` events — currently relies on the in-cluster trust boundary; v2 may sign payloads so external SIEM can verify.
+- **Webhook signing** for `org.token.revoked` events — currently relies on the in-cluster trust boundary; v2 may sign payloads so external SIEM can verify.
 - **Anomaly detection** on the `metric-count` series (e.g. spike in `invalid_grant_total` from one `client_id` triggers admin alert) — operational, not in the service.
 
 ---

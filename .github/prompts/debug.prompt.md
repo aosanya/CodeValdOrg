@@ -20,7 +20,7 @@ clean up before merging.
 ### Scenario 1: `IssueKey` Succeeds but Downstream Services Don't See the New Key
 **Symptom**: Key is stored in ArangoDB but other services reject requests using
 it because their cache doesn't have the new key metadata
-**Cause**: `cross.org.key.issued` publish is missing or the Cross client is nil
+**Cause**: `org.token.issued` publish is missing or the Cross client is nil
 **Check**: Confirm `m.crossClient.Publish(...)` is called after `backend.Insert`;
 check Cross client wiring in `cmd/main.go`
 
@@ -59,7 +59,7 @@ requested `(scope, resource)` tuple; confirm `Scopes.Allows` logic
 
 ### Scenario 7: Revoked Key Still Accepted
 **Symptom**: A key that was revoked via `RevokeKey` continues to pass `VerifyToken`
-**Cause**: `cross.org.key.revoked` was not published, so downstream caches
+**Cause**: `org.token.revoked` was not published, so downstream caches
 still hold the old `Allowed: true` decision — or `VerifyToken` is not
 checking the `Revoked` flag on the stored key
 **Check**: Confirm `RevokeKey` publishes the event AND sets the key's `Revoked`
@@ -91,7 +91,7 @@ Add debug prints at:
    - `log.Printf("[ORG-XXX] Key inserted: keyID=%s", key.ID)`
 
 3. **Before and After Pub/Sub Publish**
-   - `log.Printf("[ORG-XXX] Publishing cross.org.key.issued: keyID=%s", key.ID)`
+   - `log.Printf("[ORG-XXX] Publishing org.token.issued: keyID=%s", key.ID)`
 
 4. **Authorization Decisions**
    - `log.Printf("[ORG-XXX] Authorize: principalID=%s scope=%s resource=%s allowed=%v", req.PrincipalID, req.Scope, req.Resource, decision.Allowed)`

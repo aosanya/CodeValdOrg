@@ -20,7 +20,7 @@ func New(
 	crossAddr, advertiseAddr, agencyID string,
 	pingInterval, pingTimeout time.Duration,
 ) (sharedregistrar.Registrar, error) {
-	produces := []string{"cross.org." + agencyID + ".token.revoked"}
+	produces := []string{"org.token.revoked", "org.token.issued"}
 	return sharedregistrar.New(
 		crossAddr,
 		advertiseAddr,

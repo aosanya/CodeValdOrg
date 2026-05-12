@@ -37,8 +37,8 @@ Follow the **mandatory completion process** for CodeValdOrg tasks:
    - [ ] `Backend`, `KeyHasher`, and cross-service clients are injected — no hardcoded deps in manager
    - [ ] Plaintext keys / tokens are never logged, never persisted, and returned
          from `Issue` / `Rotate` exactly once
-   - [ ] `cross.org.key.issued` is published on every successful `IssueKey`
-   - [ ] `cross.org.key.revoked` is published on every successful `RevokeKey`
+   - [ ] `org.token.issued` is published on every successful `IssueKey`
+   - [ ] `org.token.revoked` is published on every successful `RevokeKey`
    - [ ] Secret comparisons use `subtle.ConstantTimeCompare` or equivalent
    - [ ] No agency/task/git/AI/comms domain logic or frontend serving added
    - [ ] Errors are typed (`ErrKeyNotFound`, `ErrUnauthorized`, …) — not raw strings

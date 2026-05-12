@@ -81,7 +81,7 @@ func (m *manager) IssueKey(ctx context.Context, req IssueKeyRequest) (Key, strin
         return Key{}, "", err
     }
     // MANDATORY: publish so caches in other services invalidate
-    m.crossClient.Publish(ctx, "cross.org.key.issued", key.ID)
+    m.crossClient.Publish(ctx, "org.token.issued", key.ID)
     return key, plaintext, nil // plaintext returned ONCE to caller, never again
 }
 
@@ -197,7 +197,7 @@ func register(ctx context.Context, crossAddr string) {
     req := &pb.RegisterRequest{
         ServiceName: "codevaldorg",
         Addr:        ":50051",
-        Produces:    []string{"cross.org.key.issued", "cross.org.key.revoked"},
+        Produces:    []string{"org.token.issued", "org.token.revoked"},
         Consumes:    []string{},
         Routes:      orgRoutes(),
     }
@@ -305,5 +305,5 @@ func toGRPCError(err error) error {
 - ❌ **Pub/sub topic strings as raw literals** — define as constants
 - ❌ **Business logic in gRPC handlers** — delegate to `OrgManager`
 - ❌ **Hardcoded ArangoDB connection in manager** — inject `Backend`
-- ❌ **Skipping `cross.org.key.issued` / `cross.org.key.revoked`** — always publish on issue / revoke
+- ❌ **Skipping `org.token.issued` / `org.token.revoked`** — always publish on issue / revoke
 ````

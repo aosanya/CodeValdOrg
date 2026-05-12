@@ -16,15 +16,15 @@ Follow the **mandatory task startup process** for CodeValdOrg tasks:
    - Check `documentation/3-SofwareDevelopment/mvp-details/` for detailed specs per topic
    - Check `documentation/1-SoftwareRequirements/requirements.md` for unimplemented functional requirements
    - Follow the onion approach — Layer 1 (raw core) before Layer 2 (integration)
-   - Layer 1 priority: `IssueKey` → `VerifyToken` → `Authorize` → `Register with Cross` → `cross.org.key.issued`
+   - Layer 1 priority: `IssueKey` → `VerifyToken` → `Authorize` → `Register with Cross` → `org.token.issued`
 
 2. **Read the specification**
    - Re-read the relevant FRs in `documentation/1-SoftwareRequirements/requirements.md`
    - Re-read the corresponding section in `documentation/2-SoftwareDesignAndArchitecture/architecture.md`
    - Read the task spec in `documentation/3-SofwareDevelopment/mvp-details/{topic-file}.md`
    - Understand how the task fits into the single-interface design (`OrgManager`)
-   - Note the mandatory pub/sub requirements (`cross.org.key.issued` on issue,
-     `cross.org.key.revoked` on revoke) and the plaintext-once rule for issued keys
+   - Note the mandatory pub/sub requirements (`org.token.issued` on issue,
+     `org.token.revoked` on revoke) and the plaintext-once rule for issued keys
 
 3. **Create feature branch from `main`**
    ```bash
@@ -38,7 +38,7 @@ Follow the **mandatory task startup process** for CodeValdOrg tasks:
 4. **Read project guidelines**
    - Review `.github/instructions/rules.instructions.md`
    - Key rules: interface-first, inject Backend, hash keys before persistence,
-     plaintext returned once, publish `cross.org.key.issued` / `cross.org.key.revoked`,
+     plaintext returned once, publish `org.token.issued` / `org.token.revoked`,
      no agency/task/git/AI/comms logic, context propagation, godoc on all exports
 
 5. **Create a todo list**
@@ -61,8 +61,8 @@ Before starting:
 - **No agency/task/git/AI/comms logic, no frontend serving** — this service
   manages principals, keys, and scopes only
 - **`OrgManager` is the only entry point** — gRPC handlers delegate to it
-- **Pub/sub is mandatory** — publish `cross.org.key.issued` on every successful
-  `IssueKey`, `cross.org.key.revoked` on every successful `RevokeKey`
+- **Pub/sub is mandatory** — publish `org.token.issued` on every successful
+  `IssueKey`, `org.token.revoked` on every successful `RevokeKey`
 - **Plaintext secrets** — never logged, never persisted, returned from
   `Issue` / `Rotate` exactly once
 - **Backend is injected** — never hardcode ArangoDB connection in manager

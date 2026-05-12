@@ -15,7 +15,7 @@ Completed tasks are removed from `mvp.md` and recorded here with their completio
 | ORG-009 | Organization + User lifecycle | 2026-05-11 | main | Full CRUD + `InviteUser`, `AcceptInvitation`, `SuspendUser`, `ReactivateUser`, built-in role seeding |
 | ORG-010 | Token issuance | 2026-05-11 | main | Auth-code+PKCE, client-credentials, refresh-token rotation; strong-CP publish-or-rollback; HTTP handlers wired |
 | ORG-011 | Token introspection | 2026-05-11 | main | Hash-index lookup; `{active:false}` parity; scope/sub/client_id resolution; HTTP introspect endpoint |
-| ORG-012 | Token revocation + pub/sub | 2026-05-11 | main | Revoke by hash; publish `cross.org.{agencyID}.token.revoked`; HTTP revoke endpoint |
+| ORG-012 | Token revocation + pub/sub | 2026-05-11 | main | Revoke by hash; publish `org.token.revoked`; HTTP revoke endpoint |
 | ORG-013 | Scope registration | 2026-05-11 | main | Idempotent `RegisterScope`, `DeprecateScope`, `ListScopes`; flat grammar validation; reserved-prefix guard |
 | ORG-014 | Role taxonomy + membership | 2026-05-11 | main | 4 built-in roles seeded at init; `GrantMembership`, `RevokeMembership`, `ListMemberships`, `InviteUser`, `AcceptInvitation` |
 | ORG-015 | OAuth client management | 2026-05-11 | main | `CreateClient`, `RotateSecret`, `ListClients`, `DeleteClient`; Argon2id PHC secrets; grace-period rotation |

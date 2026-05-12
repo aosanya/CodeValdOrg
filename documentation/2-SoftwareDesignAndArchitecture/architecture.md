@@ -288,13 +288,13 @@ After each successful mutating operation, CodeValdOrg publishes a typed event vi
 
 | Event | Topic | Trigger |
 |---|---|---|
-| Organization created | `cross.org.{agencyID}.organization.created` | `InitOrganization` |
-| User invited | `cross.org.{agencyID}.user.invited` | `InviteUser` |
-| User activated | `cross.org.{agencyID}.user.activated` | `AcceptInvitation` |
-| User suspended | `cross.org.{agencyID}.user.suspended` | `SuspendUser` |
-| Membership granted | `cross.org.{agencyID}.membership.granted` | `GrantMembership` |
-| Token issued | `cross.org.{agencyID}.token.issued` | `Token` (all grant types) |
-| Token revoked | `cross.org.{agencyID}.token.revoked` | `Revoke` + refresh rotation reuse |
+| Organization created | `org.organization.created` | `InitOrganization` |
+| User invited | `org.user.invited` | `InviteUser` |
+| User activated | `org.user.activated` | `AcceptInvitation` |
+| User suspended | `org.user.suspended` | `SuspendUser` |
+| Membership granted | `org.membership.granted` | `GrantMembership` |
+| Token issued | `org.token.issued` | `Token` (all grant types) |
+| Token revoked | `org.token.revoked` | `Revoke` + refresh rotation reuse |
 
 ---
 

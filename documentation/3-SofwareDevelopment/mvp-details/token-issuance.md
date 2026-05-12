@@ -100,7 +100,7 @@ Triggered by `Token` RPC with `grant_type = authorization_code`.
       - All four operations in a single ArangoDB transaction.
 
 6.  Publish:
-      - cross.org.{agencyID}.token.issued event with token IDs (NOT plaintext)
+      - org.token.issued event with token IDs (NOT plaintext)
       - Publish failure → see "Failure-mode contract" below.
 
 7.  Return to caller:
@@ -143,7 +143,7 @@ Triggered by `Token` RPC with `grant_type = client_credentials`.
       - Edges: issued_to → OAuthClient, has_scope → Scope (×N).
       - NO RefreshToken — client-credentials never issues one (FR-006).
 
-5.  Publish: cross.org.{agencyID}.token.issued (same as step 6 above).
+5.  Publish: org.token.issued (same as step 6 above).
 
 6.  Return: same shape as Authorization Code, minus refresh_token.
 
@@ -169,7 +169,7 @@ Triggered by `Token` RPC with `grant_type = refresh_token`.
         - Walk parent ancestors via parent edge.
         - For every RefreshToken in the chain: write TokenRevocation with reason = "refresh_reuse".
         - For the AccessToken issued alongside the original mint and any descendants: same.
-        - Publish cross.org.{agencyID}.token.revoked for each.
+        - Publish org.token.revoked for each.
         - Return ErrInvalidGrant.
 
 3.  Compute effective scope:
@@ -187,7 +187,7 @@ Triggered by `Token` RPC with `grant_type = refresh_token`.
       - Copy issued_to, issued_for, has_scope edges from original onto both new entities
       - UpdateEntity presented RefreshToken {consumed_at: now}
 
-6.  Publish: cross.org.{agencyID}.token.issued.
+6.  Publish: org.token.issued.
 
 7.  Return: same shape as Authorization Code.
 
@@ -233,7 +233,7 @@ explicitly rejected:
 ## Cross events — payload shape
 
 All token-issuance publishes go to topic
-`cross.org.{agencyID}.token.issued`:
+`org.token.issued`:
 
 ```json
 {

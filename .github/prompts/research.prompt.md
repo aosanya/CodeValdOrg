@@ -86,7 +86,7 @@ Key interfaces:
   - KeyHasher: Hash, Compare (constant-time)
 
 Cross-service events:
-  Produces: cross.org.key.issued, cross.org.key.revoked
+  Produces: org.token.issued, org.token.revoked
   Consumes: (none in Layer 1)
 
 Documentation structure:

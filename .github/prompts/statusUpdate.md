@@ -31,9 +31,9 @@ CodeValdOrg whether an inbound caller is authenticated and authorized.
 
 | Service | Method | Description |
 |---|---|---|
-| `OrgService` | `IssueKey` | Issues a new API key for a principal; returns the plaintext exactly once; publishes `cross.org.key.issued` |
-| `OrgService` | `RotateKey` | Rotates an existing key; returns a new plaintext exactly once; publishes `cross.org.key.issued` |
-| `OrgService` | `RevokeKey` | Revokes a key; publishes `cross.org.key.revoked` |
+| `OrgService` | `IssueKey` | Issues a new API key for a principal; returns the plaintext exactly once; publishes `org.token.issued` |
+| `OrgService` | `RotateKey` | Rotates an existing key; returns a new plaintext exactly once; publishes `org.token.issued` |
+| `OrgService` | `RevokeKey` | Revokes a key; publishes `org.token.revoked` |
 | `OrgService` | `GetKey` | Returns key metadata (no plaintext, no hash) |
 | `OrgService` | `ListKeys` | Returns a filtered list of key metadata |
 | `OrgService` | `VerifyToken` | Validates a plaintext token and returns the authenticated `Principal` |
@@ -55,8 +55,8 @@ CodeValdOrg whether an inbound caller is authenticated and authorized.
 
 | Topic | Direction | Description |
 |---|---|---|
-| `cross.org.key.issued`  | **produces** | Published after every successful `IssueKey` / `RotateKey` |
-| `cross.org.key.revoked` | **produces** | Published after every successful `RevokeKey` |
+| `org.token.issued`  | **produces** | Published after every successful `IssueKey` / `RotateKey` |
+| `org.token.revoked` | **produces** | Published after every successful `RevokeKey` |
 
 ### Key Design Properties
 - **Single interface** — `OrgManager` is the only business-logic entry point

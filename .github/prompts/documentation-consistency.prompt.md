@@ -56,10 +56,10 @@ Storage collections (per agency database):
   - org_relationships     — all graph edges
 
 Cross-service events:
-  Produces: cross.org.{agencyID}.organization.created, cross.org.{agencyID}.user.invited,
-            cross.org.{agencyID}.user.activated, cross.org.{agencyID}.user.suspended,
-            cross.org.{agencyID}.membership.granted, cross.org.{agencyID}.token.issued,
-            cross.org.{agencyID}.token.revoked
+  Produces: org.organization.created, org.user.invited,
+            org.user.activated, org.user.suspended,
+            org.membership.granted, org.token.issued,
+            org.token.revoked
   Consumes: (none in Layer 1)
 
 Documentation structure:

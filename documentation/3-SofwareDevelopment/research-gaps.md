@@ -108,7 +108,7 @@ Lookup is hash equality through the unique index — no
 `crypto/subtle` compare needed. `{active: false}` parity for unknown /
 expired / revoked / malformed (RFC 7662). Caller authentication is
 required (rejects A1 anonymous probing). Caching contract is opt-in
-for v1 with mandatory invalidation on `cross.org.{agencyID}.token.revoked`.
+for v1 with mandatory invalidation on `org.token.revoked`.
 
 ---
 
@@ -173,7 +173,7 @@ Outstanding sub-questions deferred:
 
 Resolved by
 [mvp-details/revocation-and-cache.md](mvp-details/revocation-and-cache.md).
-Revocation is at-least-once via `cross.org.{agencyID}.token.revoked`;
+Revocation is at-least-once via `org.token.revoked`;
 subscribers are idempotent on `token_hash`. `TokenRevocation.expires_at`
 matches the underlying token's natural expiry so the TTL purges
 revocation records exactly when they stop being load-bearing. Race on
