@@ -29,6 +29,6 @@ FROM gcr.io/distroless/static-debian12
 COPY --from=build /codevaldorg-server /codevaldorg-server
 
 # gRPC + HTTP port (cmux)
-EXPOSE 9090
+EXPOSE 50058
 
 ENTRYPOINT ["/codevaldorg-server"]

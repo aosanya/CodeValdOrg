@@ -76,7 +76,7 @@ func Load() Config {
 		CrossEndpoint:     required["CROSS_ENDPOINT"],
 		IssuerURL:         required["ORG_ISSUER_URL"],
 		ArangoDBName:      arangoDBName,
-		BindAddr:          serverutil.EnvOrDefault("BIND_ADDR", ":9090"),
+		BindAddr:          serverutil.EnvOrDefault("BIND_ADDR", ":50058"),
 		MetricsAddr:       serverutil.EnvOrDefault("METRICS_ADDR", ":9091"),
 		AccessTokenTTL:    serverutil.ParseDurationString("ORG_ACCESS_TOKEN_TTL", time.Hour),
 		RefreshTokenTTL:   serverutil.ParseDurationString("ORG_REFRESH_TOKEN_TTL", 720*time.Hour),
