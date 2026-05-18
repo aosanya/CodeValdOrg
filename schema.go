@@ -212,14 +212,16 @@ func DefaultOrgSchema() types.Schema {
 				},
 			},
 
-			// ── OAuth artifacts (org_oauth_artifacts, all immutable) ──────────────
+			// ── OAuth artifacts (org_oauth_artifacts) ────────────────────────────
+			// AuthorizationCode and RefreshToken are mutable: token exchange marks
+			// them consumed via UpdateEntity. AccessToken and TokenRevocation are
+			// immutable (revocation uses a separate TokenRevocation entity).
 			{
 				Name:              "AuthorizationCode",
 				DisplayName:       "Authorization Code",
 				PathSegment:       "authorization-codes",
 				EntityIDParam:     "authorizationCodeId",
 				StorageCollection: "org_oauth_artifacts",
-				Immutable:         true,
 				Properties: []types.PropertyDefinition{
 					{Name: "agency_id", Type: types.PropertyTypeString, Required: true},
 					{Name: "code_hash", Type: types.PropertyTypeString, Required: true},
@@ -261,7 +263,6 @@ func DefaultOrgSchema() types.Schema {
 				PathSegment:       "refresh-tokens",
 				EntityIDParam:     "refreshTokenId",
 				StorageCollection: "org_oauth_artifacts",
-				Immutable:         true,
 				Properties: []types.PropertyDefinition{
 					{Name: "agency_id", Type: types.PropertyTypeString, Required: true},
 					{Name: "token_hash", Type: types.PropertyTypeString, Required: true},

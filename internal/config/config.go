@@ -24,6 +24,7 @@ type Config struct {
 	// Optional with defaults
 	ArangoDBName      string
 	BindAddr          string
+	AdvertiseAddr     string
 	MetricsAddr       string
 	AccessTokenTTL    time.Duration
 	RefreshTokenTTL   time.Duration
@@ -77,6 +78,7 @@ func Load() Config {
 		IssuerURL:         required["ORG_ISSUER_URL"],
 		ArangoDBName:      arangoDBName,
 		BindAddr:          serverutil.EnvOrDefault("BIND_ADDR", ":50058"),
+		AdvertiseAddr:     serverutil.EnvOrDefault("ORG_GRPC_ADVERTISE_ADDR", serverutil.EnvOrDefault("BIND_ADDR", ":50058")),
 		MetricsAddr:       serverutil.EnvOrDefault("METRICS_ADDR", ":9091"),
 		AccessTokenTTL:    serverutil.ParseDurationString("ORG_ACCESS_TOKEN_TTL", time.Hour),
 		RefreshTokenTTL:   serverutil.ParseDurationString("ORG_REFRESH_TOKEN_TTL", 720*time.Hour),

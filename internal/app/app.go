@@ -72,7 +72,7 @@ func Run(cfg config.Config) error {
 	if cfg.CrossEndpoint != "" {
 		reg, regErr := registrar.New(
 			cfg.CrossEndpoint,
-			cfg.BindAddr,
+			cfg.AdvertiseAddr,
 			cfg.AgencyID,
 			cfg.RegistrarInterval,
 			cfg.PingTimeout,
